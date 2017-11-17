@@ -712,7 +712,14 @@ input[type="button"].btn-block {
   background-color: #fff;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 0.25rem; }
+  border-radius: 0.25rem;
+  color: black;
+  margin-top: 10px;
+  margin-left: 9px;
+  margin-right: 9px;
+  width: 31%;
+
+}
 
 .card-body {
   flex: 1 1 auto;

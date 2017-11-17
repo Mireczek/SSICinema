@@ -1,0 +1,28 @@
+.logo
+{
+    font-size: 30px;
+    font-sieze: 4.5vw;
+}
+.banner
+{
+    background-color: #202020;
+}
+
+header
+{
+    margin-top: 20px;
+    margin-bottom: 5%;
+}
+
+hr
+{
+    clear: both;
+    position: static;
+    width: 60%;
+
+}
+
+.footer
+{
+    background-color: #202020;
+}
