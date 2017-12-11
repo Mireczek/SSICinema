@@ -1,22 +1,23 @@
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-          type="text/css">
-    <link rel="stylesheet" href="CSS/bootstrap.css" type="text/css">
-    <link rel="stylesheet" href="CSS/style.css" type="text/css">
-    <link rel="stylesheet" href="CSS/Main.css" type="text/css">
-    <script src="JS/bootstrap.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">    
+    <link rel="stylesheet" href="resources/CSS/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="resources/CSS/style.css" type="text/css">
+    <link rel="stylesheet" href="resources/CSS/Main.css" type="text/css">
+    <script src="resources/JS/bootstrap.js" type="text/javascript"></script>
 </head>
 
 <body>
 <nav class="navbar navbar-expand-md navbar-dark sticky-top banner">
     <div class="container">
         <a class="navbar-brand logo" href="#">
-            <img style="max-height: 60px" src="Images/logo.png">
+            <img style="max-height: 60px" src="resources/Images/logo.png">
             Cinema Smile
         </a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
@@ -35,12 +36,38 @@
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#">PROMO</a>
                 </li>
+                 <sec:authorize access="isAuthenticated()">
+	                 <li class="nav-item">
+	                    <a class="nav-link text-white" href="adminManage">MANAGE</a>
+	              	 </li>
+                 </sec:authorize>
             </ul>
-            <a class="btn navbar-btn ml-2 text-white btn-secondary"><i class="fa d-inline fa-lg fa-user-circle-o"></i>
-                Sign in</a>
+            <sec:authorize access="isAuthenticated()">
+				<!-- For login user -->
+				<c:url value="/j_spring_security_logout" var="logoutUrl" />
+				<form action="${logoutUrl}" method="post" id="logoutForm">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				</form>
+				<c:if test="${pageContext.request.userPrincipal.name != null}">
+					<h2>
+						User : ${pageContext.request.userPrincipal.name} | 
+					</h2>
+				</c:if>
+				<a class="btn navbar-btn ml-2 text-white btn-secondary" href="logoutProcess"><i class="fa d-inline fa-lg fa-user-circle-o"></i>Log out</a>
+			</sec:authorize>
+			<sec:authorize access="isAnonymous()">
+          	  <a class="btn navbar-btn ml-2 text-white btn-secondary" data-toggle="modal" data-target="#loginPopUp"><i class="fa d-inline fa-lg fa-user-circle-o"></i>Sign in</a>
+            </sec:authorize>
         </div>
     </div>
 </nav>
+<div class="modal fade" id="loginPopUp" role="dialog">
+   <div class="modal-dialog modal-sm">
+     <div class="modal-content">
+     	<%@include  file="login.jsp" %>
+     </div>
+   </div>
+ </div>
 <div class="text-center bg-secondary text-white gradient-overlay">
     <div class="carousel slide" style="" data-ride="carousel" id="carouselArchitecture">
         <ol class="carousel-indicators">
@@ -50,9 +77,9 @@
         </ol>
         <div class="carousel-inner" role="listbox">
             <div class="carousel-item">
-                <img class="d-block img-fluid w-100" src="Images/m1.jpg" data-holder-rendered="true"></div>
+                <img class="d-block img-fluid w-100" src="resources/Images/m1.jpg" data-holder-rendered="true"></div>
             <div class="carousel-item active">
-                <img class="d-block img-fluid w-100" src="Images/m2.jpg" data-holder-rendered="true"></div>
+                <img class="d-block img-fluid w-100" src="resources/Images/m2.jpg" data-holder-rendered="true"></div>
         </div>
     </div>
 </div>
@@ -63,21 +90,21 @@
         </header>
         <div class="row">
             <div class="card">
-                <img class="card-img-top" src="Images/listyDoM.jpg" alt="Listy do M 3" />
+                <img class="card-img-top" src="resources/Images/listyDoM.jpg" alt="Listy do M 3" />
                 <div class="card-body">
                     <h4 class="card-title">Listy do M 3</h4>
                     <p class="card-text">Losy kilkorga bohaterów ponownie przeplatają się w Wigilię Bożego Narodzenia</p>
                 </div>
             </div>
             <div class="card">
-                <img class="card-img-top" src="Images/emotki.jpg" alt="Emotki" />
+                <img class="card-img-top" src="resources/Images/emotki.jpg" alt="Emotki" />
                 <div class="card-body">
                     <h4 class="card-title">Emotki.Film</h4>
                     <p class="card-text">Miasto Tekstopolis zamieszkują  emotki, gdzie każda z nich wyraża jedną konkretną emocję. Z wyjątkiem Minka, co może doprowadzić do katastrofy. </p>
                 </div>
             </div>
             <div class="card">
-                <img class="card-img-top" src="Images/zlemamuski.jpg" alt="Zle mamuski 2" />
+                <img class="card-img-top" src="resources/Images/zlemamuski.jpg" alt="Zle mamuski 2" />
                 <div class="card-body">
                     <h4 class="card-title">Złe mamuśki 2</h4>
                     <p class="card-text">Losy czterech kobiet pracujących w służbie medycznej splatają się w szpitalu, gdzie dochodzi do wielu nielegalnych przedsięwzięć.</p>
