@@ -55,12 +55,10 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/logoutProcess", method = RequestMethod.GET)
-	public ModelAndView logoutProcess(HttpServletRequest request, ModelMap map) {
+	public String logoutProcess(ModelMap map) {
 		SecurityContextHolder.clearContext();
 		map.put("login", new Login());
-		ModelAndView mav = new ModelAndView();
-		mav = new ModelAndView("index");
-		return mav;
+		return "index";
 	}
 	
 }

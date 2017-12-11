@@ -30,29 +30,6 @@ public class RoomService extends CrudService<Room> {
 	}
 	
 	@Override
-	public Page<Room> findAnyMatching(Optional<String> filter, Pageable pageable) {
-		if (filter.isPresent()) {
-			String repositoryFilter = "%" + filter.get() + "%";
-			return getRepository().findByEmailLikeIgnoreCaseOrNameLikeIgnoreCaseOrRoleLikeIgnoreCase(repositoryFilter,
-					repositoryFilter, repositoryFilter, pageable);
-		}
-		else {
-			return getRepository().findAll(pageable);
-		}
-	}
-	
-	@Override
-	public long countAnyMatching(Optional<String> filter) {
-		if (filter.isPresent()) {
-			String repositoryFilter = "%" + filter.get() + "%";
-			return getRepository().countByEmailLikeIgnoreCaseOrNameLikeIgnoreCase(repositoryFilter, repositoryFilter);
-		}
-		else {
-			return getRepository().count();
-		}
-	}
-	
-	@Override
 	protected RoomRepository getRepository() {
 		return roomRepository;
 	}
@@ -71,6 +48,18 @@ public class RoomService extends CrudService<Room> {
 	@Transactional
 	public void delete(long roomId) {
 		super.delete(roomId);
+	}
+	
+	@Override
+	public long countAnyMatching(Optional<String> filter) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public Page<Room> findAnyMatching(Optional<String> filter, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

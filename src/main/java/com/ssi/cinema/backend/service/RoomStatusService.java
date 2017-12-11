@@ -16,8 +16,6 @@ import com.ssi.cinema.backend.data.entity.RoomStatus;
 @Service
 public class RoomStatusService extends CrudService<RoomStatus> {
 	
-	private static final String MODIFY_LOCKED_USER_NOT_PERMITTED = "RoomStatus has been locked and cannot be modified or deleted";
-	
 	private final PasswordEncoder passwordEncoder;
 	
 	private final RoomStatusRepository roomStatusRepository;
@@ -30,29 +28,6 @@ public class RoomStatusService extends CrudService<RoomStatus> {
 	
 	public RoomStatus findByRoom(Room room) {
 		return getRepository().findByRoom(room);
-	}
-	
-	@Override
-	public Page<RoomStatus> findAnyMatching(Optional<String> filter, Pageable pageable) {
-		if (filter.isPresent()) {
-			String repositoryFilter = "%" + filter.get() + "%";
-			return getRepository().findByEmailLikeIgnoreCaseOrNameLikeIgnoreCaseOrRoleLikeIgnoreCase(repositoryFilter,
-					repositoryFilter, repositoryFilter, pageable);
-		}
-		else {
-			return getRepository().findAll(pageable);
-		}
-	}
-	
-	@Override
-	public long countAnyMatching(Optional<String> filter) {
-		if (filter.isPresent()) {
-			String repositoryFilter = "%" + filter.get() + "%";
-			return getRepository().countByEmailLikeIgnoreCaseOrNameLikeIgnoreCase(repositoryFilter, repositoryFilter);
-		}
-		else {
-			return getRepository().count();
-		}
 	}
 	
 	@Override
@@ -74,6 +49,18 @@ public class RoomStatusService extends CrudService<RoomStatus> {
 	@Transactional
 	public void delete(long roomStatusId) {
 		super.delete(roomStatusId);
+	}
+	
+	@Override
+	public long countAnyMatching(Optional<String> filter) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public Page<RoomStatus> findAnyMatching(Optional<String> filter, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

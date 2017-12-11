@@ -15,8 +15,6 @@ import com.ssi.cinema.backend.data.entity.Reservation;
 @Service
 public class ReservationService extends CrudService<Reservation> {
 	
-	private static final String MODIFY_LOCKED_USER_NOT_PERMITTED = "Reservation has been locked and cannot be modified or deleted";
-	
 	private final PasswordEncoder passwordEncoder;
 	
 	private final ReservationRepository reservationRepository;
@@ -29,29 +27,6 @@ public class ReservationService extends CrudService<Reservation> {
 	
 	public Reservation findByEmail(String email) {
 		return getRepository().findByEmail(email);
-	}
-	
-	@Override
-	public Page<Reservation> findAnyMatching(Optional<String> filter, Pageable pageable) {
-		if (filter.isPresent()) {
-			String repositoryFilter = "%" + filter.get() + "%";
-			return getRepository().findByEmailLikeIgnoreCaseOrNameLikeIgnoreCaseOrRoleLikeIgnoreCase(repositoryFilter,
-					repositoryFilter, repositoryFilter, pageable);
-		}
-		else {
-			return getRepository().findAll(pageable);
-		}
-	}
-	
-	@Override
-	public long countAnyMatching(Optional<String> filter) {
-		if (filter.isPresent()) {
-			String repositoryFilter = "%" + filter.get() + "%";
-			return getRepository().countByEmailLikeIgnoreCaseOrNameLikeIgnoreCase(repositoryFilter, repositoryFilter);
-		}
-		else {
-			return getRepository().count();
-		}
 	}
 	
 	@Override
@@ -73,6 +48,18 @@ public class ReservationService extends CrudService<Reservation> {
 	@Transactional
 	public void delete(long reservationId) {
 		super.delete(reservationId);
+	}
+	
+	@Override
+	public long countAnyMatching(Optional<String> filter) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public Page<Reservation> findAnyMatching(Optional<String> filter, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

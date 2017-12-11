@@ -32,29 +32,6 @@ public class CinemaService extends CrudService<Cinema> {
 	}
 	
 	@Override
-	public Page<Cinema> findAnyMatching(Optional<String> filter, Pageable pageable) {
-		if (filter.isPresent()) {
-			String repositoryFilter = "%" + filter.get() + "%";
-			return getRepository().findByEmailLikeIgnoreCaseOrNameLikeIgnoreCaseOrRoleLikeIgnoreCase(repositoryFilter,
-					repositoryFilter, repositoryFilter, pageable);
-		}
-		else {
-			return getRepository().findAll(pageable);
-		}
-	}
-	
-	@Override
-	public long countAnyMatching(Optional<String> filter) {
-		if (filter.isPresent()) {
-			String repositoryFilter = "%" + filter.get() + "%";
-			return getRepository().countByEmailLikeIgnoreCaseOrNameLikeIgnoreCase(repositoryFilter, repositoryFilter);
-		}
-		else {
-			return getRepository().count();
-		}
-	}
-	
-	@Override
 	protected CinemaRepository getRepository() {
 		return cinemaRepository;
 	}
@@ -73,6 +50,18 @@ public class CinemaService extends CrudService<Cinema> {
 	@Transactional
 	public void delete(long cinemaId) {
 		super.delete(cinemaId);
+	}
+	
+	@Override
+	public long countAnyMatching(Optional<String> filter) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public Page<Cinema> findAnyMatching(Optional<String> filter, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
