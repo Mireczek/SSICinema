@@ -15,8 +15,6 @@ import com.ssi.cinema.backend.data.entity.Cinema;
 @Service
 public class CinemaService extends CrudService<Cinema> {
 	
-	private static final String MODIFY_LOCKED_USER_NOT_PERMITTED = "Cinema has been locked and cannot be modified or deleted";
-	
 	private final PasswordEncoder passwordEncoder;
 	
 	private final CinemaRepository cinemaRepository;
