@@ -11,6 +11,14 @@
     <link rel="stylesheet" href="resources/CSS/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="resources/CSS/style.css" type="text/css">
     <link rel="stylesheet" href="resources/CSS/Main.css" type="text/css">
+    <style>
+    	.scrollable {
+		    flex: 1 1 0; 
+		    display: flex;
+		    flex-direction: column;
+		    overflow-y: scroll;
+		}
+    </style>
     <script src="resources/JS/bootstrap.js" type="text/javascript"></script>
 </head>
 

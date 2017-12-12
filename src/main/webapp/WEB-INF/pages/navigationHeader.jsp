@@ -18,15 +18,20 @@
                     <a class="nav-link text-white" href="#">CINEMA</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">REPERTUAR<i class=""></i>
+                    <a class="nav-link text-white" href="#">REPERTUAR</i>
                         <br> </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#">PROMO</a>
                 </li>
                  <sec:authorize access="isAuthenticated()">
-	                 <li class="nav-item">
-	                    <a class="nav-link text-white" href="adminManage">MANAGE</a>
+	                 <li class="dropdown nav-item">
+	                    <a class="dropdown-toggle nav-link text-white" data-toggle="dropdown" href="#">MANAGE</a>
+	                    <span class="caret"></span></a>
+				        <ul class="dropdown-menu">
+				          <li><a href="manageUsers">MANAGE USERS</a></li>
+				          <li><a href="manageCinema">MANAGE CINEMAS</a></li>
+				        </ul>
 	              	 </li>
                  </sec:authorize>
             </ul>

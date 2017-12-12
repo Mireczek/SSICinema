@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class CinemaManagementController {
+public class UserManagementController {
 	
-	@RequestMapping(value = "/manageCinema", method = RequestMethod.GET)
+	@RequestMapping(value = "/manageUsers", method = RequestMethod.GET)
 	public ModelAndView showCinemaManagement(HttpServletRequest request) {
-		request.setAttribute("content", "manageCinema");
+		request.setAttribute("content", "manageUsers");
 		ModelAndView model = new ModelAndView();
 		model.setViewName("index");
 		return model;

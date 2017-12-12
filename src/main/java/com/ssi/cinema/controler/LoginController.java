@@ -29,7 +29,6 @@ public class LoginController {
 	public ModelAndView login(ModelMap map,
 			@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "logout", required = false) String logout) {
-		map.put("login", new Login());
 		ModelAndView model = new ModelAndView();
 		model.setViewName("login");
 		
@@ -57,7 +56,6 @@ public class LoginController {
 	@RequestMapping(value = "/logoutProcess", method = RequestMethod.GET)
 	public String logoutProcess(ModelMap map) {
 		SecurityContextHolder.clearContext();
-		map.put("login", new Login());
 		return "index";
 	}
 	
