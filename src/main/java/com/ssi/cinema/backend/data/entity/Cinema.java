@@ -12,7 +12,7 @@ public class Cinema extends AbstractEntity {
 	
 	@NotNull
 	@Size(min = 1, max = 255)
-	@Column(name = "name", unique = true)
+	@Column(name = "name")
 	private String name;
 	
 	@NotNull

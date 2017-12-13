@@ -18,7 +18,6 @@ public class Room extends AbstractEntity {
 	
 	@NotNull
 	@ManyToOne
-	@Size(min = 4, max = 255)
 	private Cinema cinema;
 	
 	@NotNull

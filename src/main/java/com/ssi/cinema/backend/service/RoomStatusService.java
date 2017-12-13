@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,14 +15,11 @@ import com.ssi.cinema.backend.data.entity.RoomStatus;
 @Service
 public class RoomStatusService extends CrudService<RoomStatus> {
 	
-	private final PasswordEncoder passwordEncoder;
-	
 	private final RoomStatusRepository roomStatusRepository;
 	
 	@Autowired
-	public RoomStatusService(RoomStatusRepository roomStatusRepository, PasswordEncoder passwordEncoder) {
+	public RoomStatusService(RoomStatusRepository roomStatusRepository) {
 		this.roomStatusRepository = roomStatusRepository;
-		this.passwordEncoder = passwordEncoder;
 	}
 	
 	public RoomStatus findByRoom(Room room) {
@@ -33,10 +29,6 @@ public class RoomStatusService extends CrudService<RoomStatus> {
 	@Override
 	protected RoomStatusRepository getRepository() {
 		return roomStatusRepository;
-	}
-	
-	public String encodePassword(String value) {
-		return passwordEncoder.encode(value);
 	}
 	
 	@Override

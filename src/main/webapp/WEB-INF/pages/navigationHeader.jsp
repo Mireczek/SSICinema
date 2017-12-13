@@ -18,7 +18,7 @@
                     <a class="nav-link text-white" href="#">CINEMA</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">REPERTUAR</i>
+                    <a class="nav-link text-white" href="reservationSelectCinema">REPERTUAR</i>
                         <br> </a>
                 </li>
                 <li class="nav-item">
@@ -31,6 +31,8 @@
 				        <ul class="dropdown-menu">
 				          <li><a href="manageUsers">MANAGE USERS</a></li>
 				          <li><a href="manageCinema">MANAGE CINEMAS</a></li>
+				           <li><a href="manageMovies">MANAGE MOVIES</a></li>
+				           <li><a href="manageRepertoire">MANAGE REPERTOIRE</a></li>
 				        </ul>
 	              	 </li>
                  </sec:authorize>

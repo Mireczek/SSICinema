@@ -12,7 +12,7 @@ public class User extends AbstractEntity {
 	
 	@NotNull
 	@Size(min = 1, max = 255)
-	@Column(name = "email", unique = true)
+	@Column(name = "email")
 	private String email;
 	
 	@NotNull
