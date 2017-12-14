@@ -25,6 +25,10 @@ public class Reservation extends AbstractEntity {
 	@OneToOne
 	private Movie movie;
 	
+	@OneToOne
+	@NotNull
+	private Cinema cinema;
+	
 	@NotNull
 	@OneToOne
 	private Room room;
@@ -99,6 +103,14 @@ public class Reservation extends AbstractEntity {
 	
 	public void setSeats(String seats) {
 		this.seats = seats;
+	}
+	
+	public Cinema getCinema() {
+		return cinema;
+	}
+	
+	public void setCinema(Cinema cinema) {
+		this.cinema = cinema;
 	}
 	
 }

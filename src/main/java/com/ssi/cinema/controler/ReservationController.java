@@ -1,17 +1,19 @@
 package com.ssi.cinema.controler;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,89 +52,116 @@ public class ReservationController {
 	private RoomStatusService roomStatusService;
 	
 	@ModelAttribute("cinemasList")
-	public Map<String, Cinema> getCinemasList() {
-		Map<String, Cinema> cinemasMap = getCinemaNameCinemaMap();
-		return cinemasMap;
+	public Iterable<Cinema> getCinemasList() {
+		Iterable<Cinema> cinemas = cinemaService.findAll();
+		return cinemas;
+	}
+	
+	@ModelAttribute("daysList")
+	public List<String> getDaysList() {
+		List<String> days = new ArrayList<>();
+		DateTime datetime = new DateTime(new DateTime(DateTimeZone.UTC));
+		for (int i = 0; i < 20; i++) {
+			days.add("" + datetime.plusDays(i).getMonthOfYear() + "." + datetime.plusDays(i).getDayOfMonth());
+		}
+		return days;
 	}
 	
 	@RequestMapping(value = "/reservationSelectCinema", method = RequestMethod.GET)
-	public ModelAndView showReservationSelectCinema(@ModelAttribute("cinemasList") Map<String, Cinema> cinemasMap, HttpServletRequest request) {
+	public ModelAndView showReservationSelectCinema(HttpServletRequest request) {
 		request.setAttribute("content", "reservationSelectCinema");
 		ModelAndView model = new ModelAndView();
 		model.setViewName("index");
 		return model;
 	}
 	
-	@RequestMapping(value = "/reservationSelectMovie", method = RequestMethod.GET)
+	@RequestMapping(value = "/reservationCreator", method = RequestMethod.GET)
 	public ModelAndView showReservationSelectMovie(HttpServletRequest request, ModelMap map) {
-		request.setAttribute("content", "reservationSelectMovie");
 		String selectedCinemaString = request.getParameter("selectedCinema");
-		Map<String, Cinema> cinemasMap = (Map<String, Cinema>) map.get("cinemasList");
-		if (cinemasMap == null) {
-			System.out.println("fdsa;fasd");
+		String selectedDayString = request.getParameter("selectedDay");
+		String selectedMovieHourString = request.getParameter("selectedHour");
+		String selectedMovieIdString = request.getParameter("selectedMovie");
+		
+		Reservation reservation = (Reservation) request.getSession().getAttribute("reservation");
+		if (reservation == null) {
+			reservation = new Reservation();
+			request.getSession().setAttribute("reservation", reservation);
 		}
-		Cinema selectedCinema = cinemasMap.get(selectedCinemaString);
-		Map<Movie, Set<Date>> data = getRepertoireByMovieForCinema(selectedCinema);
+		if (!StringUtils.isEmpty(selectedCinemaString)) {
+			if (reservation.getCinema() == null || (reservation.getCinema() != null && !String.valueOf(reservation.getCinema().getId()).equals(selectedCinemaString))) {
+				Cinema cinema = cinemaService.load(Long.valueOf(selectedCinemaString));
+				reservation.setCinema(cinema);
+			}
+		}
+		if (!StringUtils.isEmpty(selectedDayString)) {
+			int year = new DateTime(new Date()).getYear();
+			String month = selectedDayString.substring(0, selectedDayString.indexOf('.'));
+			String day = selectedDayString.substring(selectedDayString.indexOf('.') + 1);
+			reservation.setDate(new DateTime(year, Integer.parseInt(month), Integer.parseInt(day), 0, 0).toDate());
+		}
+		if (!StringUtils.isEmpty(selectedMovieHourString)) {
+			if (reservation.getDate() != null) {
+				DateTime datetime = new DateTime(reservation.getDate());
+				String hour = selectedDayString.substring(0, selectedDayString.indexOf(':'));
+				String minutes = selectedDayString.substring(selectedDayString.indexOf(':') + 1);
+				reservation.setDate(datetime.withHourOfDay(Integer.parseInt(hour)).withMinuteOfHour(Integer.parseInt(minutes)).toDate());
+			}
+			
+		}
+		if (!StringUtils.isEmpty(selectedMovieIdString)) {
+			if (reservation.getMovie() == null || (reservation.getMovie() != null && !String.valueOf(reservation.getMovie().getId()).equals(selectedMovieIdString))) {
+				Movie movie = movieService.load(Long.valueOf(selectedMovieIdString));
+				reservation.setMovie(movie);
+			}
+		}
 		
 		ModelAndView model = new ModelAndView();
+		if (reservation.getCinema() == null && reservation.getDate() == null) {
+			model.addObject("repertoire", getRepertoire(reservation.getCinema(), reservation.getDate()));
+		}
 		
-		Reservation reservation = new Reservation();
-		model.addObject("reservation", reservation);
-		model.addObject("repertoire", data);
+		request.setAttribute("content", "reservationSelectCinema");
+		model.addObject("chooseSeats", isReadyToSelectSeats(reservation));
 		model.setViewName("index");
 		return model;
 	}
 	
-	/*
-	@RequestMapping(value = "/reservationSelectSeats", method = RequestMethod.GET)
-	public ModelAndView showReservationSelectSeats(HttpServletRequest request) {
-		request.setAttribute("content", "reservation");
-		String selected = request.getParameter("item");
-		ModelAndView model = new ModelAndView();
-		Map<String, User> usersMap = getUserNameUserMap();
-		if (!StringUtils.isEmpty(selected)) {
-			model.addObject("selectedUser", usersMap.get(selected));
+	private boolean isReadyToSelectSeats(Reservation reservation) {
+		if (reservation.getCinema() == null) {
+			return false;
 		}
-		model.addObject("usersList", usersMap.keySet());
-		model.addObject("user", new User());
-		model.setViewName("index");
-		return model;
-	}*/
-	
-	private Map<String, Cinema> getCinemaNameCinemaMap() {
-		Iterable<Cinema> cinemas = cinemaService.findAll();
-		Map<String, Cinema> map = new TreeMap<>();
-		for (Cinema cinema : cinemas) {
-			map.put(cinema.getCity() + " - " + cinema.getName(), cinema);
+		if (reservation.getMovie() == null) {
+			return false;
 		}
-		return map;
+		if (reservation.getDate() == null) {
+			return false;
+		}
+		return true;
 	}
 	
-	private Map<Movie, Set<Date>> getRepertoireByMovieForCinema(Cinema cinema) {
-		// TODO: change findByCinema
-		Iterable<Repertoire> repertoires = repertoireService.findAll();
-		//	Map<Long, Movie> moviesMap = getMoviesMap();
-		Map<Movie, Set<Date>> map = new TreeMap<>();
-		for (Repertoire repertoire : repertoires) {
-			if (map.containsKey(repertoire.getMovie())) {
-				map.get(repertoire.getMovie()).add(repertoire.getDate());
-			}
-			else {
-				Set<Date> dates = new TreeSet<>();
-				dates.add(repertoire.getDate());
-				map.put(repertoire.getMovie(), dates);
+	private Map<Movie, List<String>> getRepertoire(Cinema cinema, Date date) {
+		// find by cinema and date
+		Iterable<Repertoire> allRepertoires = repertoireService.findAll();
+		Map<Movie, List<String>> data = new TreeMap<>();
+		Date dateFrom = new DateTime(date).withTimeAtStartOfDay().toDate();
+		Date dateTo = new DateTime(date).withTime(32, 59, 59, 0).toDate();
+		for (Repertoire repertoire : allRepertoires) {
+			if (cinema.getId() == repertoire.getRoom().getCinema().getId() &&
+					dateFrom.before(repertoire.getDate()) && dateTo.after(repertoire.getDate())) {
+				DateTime datetime = new DateTime(repertoire.getDate());
+				
+				if (data.containsKey(repertoire.getMovie())) {
+					String hour = "" + datetime.getHourOfDay() + ":" + datetime.getMinuteOfHour();
+					data.get(repertoire.getMovie()).add(hour);
+				}
+				else {
+					List<String> hours = new ArrayList<>();
+					hours.add("" + datetime.getHourOfDay() + ":" + datetime.getMinuteOfHour());
+					data.put(repertoire.getMovie(), hours);
+				}
 			}
 		}
-		return map;
-	}
-	
-	private Map<Long, Movie> getMoviesMap() {
-		Iterable<Movie> movies = movieService.findAll();
-		Map<Long, Movie> map = new HashMap<>();
-		for (Movie movie : movies) {
-			map.put(movie.getId(), movie);
-		}
-		return map;
+		return data;
 	}
 	
 }
