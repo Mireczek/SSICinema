@@ -2,6 +2,7 @@ package com.ssi.cinema.backend.data.entity;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
@@ -9,9 +10,11 @@ import javax.validation.constraints.NotNull;
 public class Repertoire extends AbstractEntity {
 	
 	@NotNull
+	@Column(length = 1000000)
 	private Room room;
 	
 	@NotNull
+	@Column(length = 1000000)
 	private Movie movie;
 	
 	@NotNull

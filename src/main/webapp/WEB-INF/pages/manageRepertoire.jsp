@@ -13,20 +13,20 @@
 			            <table align="center">
 			                <tr>
 			                    <td>
-			                        <form:label path="room">room:</form:label>
+			                        <form:label path="roomId">room:</form:label>
 			                    </td>
 			                    <td>
-			                        <form:select path="room">
+			                        <form:select path="roomId">
 							             <form:options items="${roomList}" itemValue="id" itemLabel="name" />
 							        </form:select>
 			                    </td>
 			                </tr>
 			                <tr>
 			                    <td>
-			                        <form:label path="movie">movie:</form:label>
+			                        <form:label path="movieId">movie:</form:label>
 			                    </td>
 			                    <td>
-			                        <form:select path="movie">
+			                        <form:select path="movieId">
 							             <form:options items="${movieList}" itemValue="id" itemLabel="name" />
 							        </form:select>
 			                    </td>
@@ -36,7 +36,15 @@
 			                        <form:label path="date">date:</form:label>
 			                    </td>
 			                    <td>
-									<form:input type="text" path="date" class="date" name="date"/>
+									<form:input type="text" path="date" id="datepicker"/>
+			                    </td>
+			                </tr>
+			                <tr>
+			                    <td>
+			                        <form:label path="time">time:</form:label>
+			                    </td>
+			                    <td>
+									<form:input type="text" path="time"/>
 			                    </td>
 			                </tr>
 			                <tr>
@@ -48,5 +56,11 @@
 			            </table>
 			        </form:form>
       </div>
+      ${message}
     </div>
 </div>
+ <script>
+
+    $( function() {
+        $( "#datepicker" ).datepicker();
+    } );</script>

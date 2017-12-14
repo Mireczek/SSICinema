@@ -53,7 +53,7 @@ public class CinemaManagementController {
 		ModelAndView model = new ModelAndView();
 		Map<String, Cinema> cinemasMap = getCinemaNameCinemaMap();
 		Room room = new Room(roomDefinition.getName(), cinemasMap.get(roomDefinition.getCinema()));
-		room.setSeatsDefinition(roomDefinition.getSeatsRows()+ " x " + roomDefinition.getSeatsColumns());
+		room.setSeatsDefinition(roomDefinition.getSeatsRows() + "x" + roomDefinition.getSeatsColumns());
 		roomService.save(room);
 		model.addObject("selectedCinema", cinemasMap.get(roomDefinition.getCinema()));
 		

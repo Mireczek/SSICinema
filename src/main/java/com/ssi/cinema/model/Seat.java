@@ -2,27 +2,39 @@ package com.ssi.cinema.model;
 
 public class Seat {
 	
-	private String row;
+	private int row;
 	
-	private String column;
+	private int column;
 	
-	public String getRow() {
-		return row;
-	}
+	private boolean locked;
 	
-	public void setRow(String row) {
+	public Seat(int row, int column) {
 		this.row = row;
-	}
-	
-	public String getColumn() {
-		return column;
-	}
-	
-	public void setColumn(String column) {
 		this.column = column;
 	}
 	
-	public String getPositionColumn() {
-		return row + column;
+	public int getRow() {
+		return row;
 	}
+	
+	public void setRow(int row) {
+		this.row = row;
+	}
+	
+	public int getColumn() {
+		return column;
+	}
+	
+	public void setColumn(int column) {
+		this.column = column;
+	}
+
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+	
 }

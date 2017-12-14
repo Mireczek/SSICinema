@@ -1,5 +1,6 @@
 package com.ssi.cinema.backend.service;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class RoomStatusService extends CrudService<RoomStatus> {
 		this.roomStatusRepository = roomStatusRepository;
 	}
 	
-	public RoomStatus findByRoom(Room room) {
-		return getRepository().findByRoom(room);
+	public RoomStatus findByRoomAndDate(Room room, Date date) {
+		return getRepository().findByRoomAndDate(room, date);
 	}
 	
 	@Override
