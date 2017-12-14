@@ -36,6 +36,16 @@
 				        </ul>
 	              	 </li>
                  </sec:authorize>
+                <sec:authorize access="hasRole('director')">
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle nav-link text-white" data-toggle="dropdown" href="#">MANAGE</a>
+                        <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="manageCinema">MANAGE CINEMAS</a></li>
+                            <li><a href="generateReport">REPORTS</a></li>
+                        </ul>
+                    </li>
+                </sec:authorize>
             </ul>
             <sec:authorize access="isAuthenticated()">
 				<c:if test="${pageContext.request.userPrincipal.name != null}">
