@@ -13,6 +13,10 @@ public class Seat {
 		this.column = column;
 	}
 	
+	public String getPosition() {
+		return "" + row + ":" + column;
+	}
+	
 	public int getRow() {
 		return row;
 	}
@@ -28,11 +32,11 @@ public class Seat {
 	public void setColumn(int column) {
 		this.column = column;
 	}
-
+	
 	public boolean isLocked() {
 		return locked;
 	}
-
+	
 	public void setLocked(boolean locked) {
 		this.locked = locked;
 	}

@@ -149,22 +149,26 @@ public class ReservationController {
 		else {
 			request.setAttribute("content", "reservationSelectSeats");
 			List<List<Seat>> seats = prepareSeatsMap(reservation);
-			if (reservation.getSeats() != null) {
+			if (reservation.getSeats() != null && selectedSeat != null) {
 				if (reservation.getSeats().contains(selectedSeat)) {
 					reservation.setSeats(reservation.getSeats().replaceAll(selectedSeat + ";", ""));
 				}
 				else {
-					reservation.setSeats(reservation.getSeats() + selectedSeat);
+					reservation.setSeats(reservation.getSeats() + selectedSeat + ";");
 				}
 			}
 			else {
 				if (reservation.getSeats() == null) {
 					reservation.setSeats("");
 				}
-				reservation.setSeats(reservation.getSeats() + selectedSeat);
+				if (selectedSeat != null) {
+					reservation.setSeats(reservation.getSeats() + selectedSeat + ";");
+				}
 			}
+			model.addObject("selectedSeats", reservation.getSeats());
 			model.addObject("seatsDefinition", seats);
 		}
+		
 		model.setViewName("index");
 		return model;
 	}

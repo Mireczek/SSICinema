@@ -5,17 +5,17 @@
     <div class="container">
     Select seat
         <div class="row">
-            <div class="list-group scrollable">
+            <div class="">
             	<c:forEach items="${seatsDefinition}" var="column">
   				 	<c:forEach items="${column}" var="seat">
 	  				 	<c:choose>
 						    <c:when test="${!seat.isLocked()}">
 							    <c:choose>
-								    <c:when test="${!seat.isLocked()}">
-								     	<a href="reservationCreatorSeatsSelection?selectedSeat=${seat.getRow()}:${seat.getColumn()}" > </a>
+								    <c:when test="${selectedSeats.contains(seat.getPosition())}">
+								     	<a href="reservationCreatorSeatsSelection?selectedSeat=${seat.getRow()}:${seat.getColumn()}" >O</a>
 								    </c:when>    
 								    <c:otherwise>
-								       <a href="reservationCreatorSeatsSelection?selectedSeat=${seat.getRow()}:${seat.getColumn()}" > </a>
+								       <a href="reservationCreatorSeatsSelection?selectedSeat=${seat.getRow()}:${seat.getColumn()}" >S</a>
 								    </c:otherwise>
 								</c:choose>
 						    </c:when>    
