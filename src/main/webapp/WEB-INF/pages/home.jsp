@@ -23,9 +23,9 @@
             <h2>Najnowsze filmy</h2>
         </header>
         <div class="row">
-         <c:forEach items="${moviesList}" var="entry">
+         <c:forEach items="${movieList}" var="entry">
             <div class="card" style="">
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/${entry.getLink()}" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+				<center><iframe width="340" height="250" src="https://www.youtube.com/embed/${entry.getLink()}" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe></center>
                 <div class="card-body">
                     <h4 class="card-title">${entry.getName()}</h4>
                     <p class="card-text">${entry.getDescription()}</p>
