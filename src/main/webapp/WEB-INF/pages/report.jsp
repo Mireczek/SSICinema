@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<div class="py-5 bg-dark text-white gradient-overlay">
+<div class="py-5 bg-dark text-white">
     <div class="container">
         <header>
             <h2>Generate report</h2>
@@ -35,19 +35,19 @@
                 </tr>
                 <tr>
                     <td>
-                        <form:label path="month">movie:</form:label>
+                        <form:label path="month">month:</form:label>
                     </td>
                     <td>
                         <form:select path="month" name="month" id="month">
-                            <form:option value="01"/>
-                            <form:option value="02"/>
-                            <form:option value="03"/>
-                            <form:option value="04"/>
-                            <form:option value="05"/>
-                            <form:option value="06"/>
-                            <form:option value="07"/>
-                            <form:option value="08"/>
-                            <form:option value="09"/>
+                            <form:option value="1"/>
+                            <form:option value="2"/>
+                            <form:option value="3"/>
+                            <form:option value="4"/>
+                            <form:option value="5"/>
+                            <form:option value="6"/>
+                            <form:option value="7"/>
+                            <form:option value="8"/>
+                            <form:option value="9"/>
                             <form:option value="10"/>
                             <form:option value="11"/>
                             <form:option value="12"/>
@@ -84,7 +84,7 @@
                             ${entry.getMovie()}
                         </td>
                         <td>
-                            ${entry.getDate()}
+                            ${entry.getDayString()}
                         </td>
                         <td>
                             ${entry.getTickets()}

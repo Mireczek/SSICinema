@@ -3,7 +3,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<div class="py-5 bg-dark text-white gradient-overlay">
+<div class="py-5 bg-dark text-white">
     <div class="container">
         <header>
             <h2>Manage cinemas</h2>

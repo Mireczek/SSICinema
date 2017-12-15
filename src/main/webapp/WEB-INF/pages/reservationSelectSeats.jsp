@@ -1,7 +1,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
  <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<div class="py-5 bg-dark text-white gradient-overlay">
+<div class="py-5 bg-dark text-white">
     <div class="container">
     <c:choose>
 	    <c:when test="${selectedSeats.isEmpty()}">
