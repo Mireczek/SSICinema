@@ -1,23 +1,21 @@
 package com.ssi.cinema.controler;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.ssi.cinema.backend.data.entity.Reservation;
+import com.ssi.cinema.backend.service.ReservationService;
+import com.ssi.cinema.model.Report;
+import com.ssi.cinema.model.ReportObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.ssi.cinema.backend.data.entity.Reservation;
-import com.ssi.cinema.backend.service.ReservationService;
-import com.ssi.cinema.model.Report;
-import com.ssi.cinema.model.ReportObject;
 
 @Controller
 public class ReportController {
@@ -54,22 +52,19 @@ public class ReportController {
 		catch (Exception e) {
 			model.addObject("message", "Problems with generating report!");
 		}
-		
-		request.setAttribute("content", "manageMovies");
+
+		request.setAttribute("content", "report");
 		model.setViewName("index");
 		return model;
 	}
 	
 	boolean addToReport(Reservation reservation, Report report) {
-		if ((!report.getCinema().isEmpty() && (!reservation.getCinema().getName().equals(report.getCinema())))
-				|| (!report.getMovie().isEmpty() && (!reservation.getMovie().getName().equals(report.getMovie())))
-				|| (!(reservation.getDate().getYear() == Integer.parseInt(report.getYear())))
-				|| (!(reservation.getDate().getMonth() == Integer.parseInt(report.getMonth())))
-				|| (!report.getDay().isEmpty() && (!(reservation.getDate().getDate() == Integer.parseInt(report.getDay()))))) {
-			return false;
-		}
-		return true;
-	}
+        return (report.getCinema().isEmpty() || (reservation.getCinema().getName().equals(report.getCinema())))
+                && (report.getMovie().isEmpty() || (reservation.getMovie().getName().equals(report.getMovie())))
+                && (reservation.getDate().getYear() + 100 == Integer.parseInt(report.getYear()))
+                && (reservation.getDate().getMonth() == Integer.parseInt(report.getMonth()))
+                && (report.getDay().isEmpty() || (reservation.getDate().getDate() == Integer.parseInt(report.getDay())));
+    }
 	
 	ReportObject buildReportObject(Reservation reservation) {
 		return new ReportObject(reservation.getCinema().getName(),
