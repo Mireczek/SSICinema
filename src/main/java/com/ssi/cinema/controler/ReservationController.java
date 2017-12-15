@@ -60,12 +60,6 @@ public class ReservationController {
 		return cinemas;
 	}
 	
-	@ModelAttribute("moviesList")
-	public Iterable<Movie> getMoviesList() {
-		Iterable<Movie> movies = movieService.findAll();
-		return movies;
-	}
-	
 	@ModelAttribute("daysList")
 	public List<String> getDaysList() {
 		List<String> days = new ArrayList<>();
