@@ -19,16 +19,22 @@ public class Movie extends AbstractEntity {
 	@Size(min = 1, max = 255)
 	private String description;
 	
+	@NotNull
+	@Size(min = 1, max = 255)
+	private String link;
+	
 	public Movie() {
 		// An empty constructor is needed for all beans
 	}
 	
-	public Movie(String email, String name, String description) {
+	public Movie(String email, String name, String description, String link) {
 		Objects.requireNonNull(description);
 		Objects.requireNonNull(name);
+		Objects.requireNonNull(link);
 		
 		this.description = description;
 		this.name = name;
+		this.link = link;
 	}
 	
 	public String getName() {
@@ -45,6 +51,14 @@ public class Movie extends AbstractEntity {
 	
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 	
 }
