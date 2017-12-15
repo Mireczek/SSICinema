@@ -23,29 +23,15 @@
             <h2>Najnowsze filmy</h2>
         </header>
         <div class="row">
-            <div class="card">
-                <img class="card-img-top" src="resources/Images/listyDoM.jpg" alt="Listy do M 3" />
+         <c:forEach items="${moviesList}" var="entry">
+            <div class="card" style="">
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/${entry.getLink()}" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
                 <div class="card-body">
-                    <h4 class="card-title">Listy do M 3</h4>
-                    <p class="card-text">Losy kilkorga bohaterów ponownie przeplatają się w Wigilię Bożego Narodzenia</p>
+                    <h4 class="card-title">${entry.getName()}</h4>
+                    <p class="card-text">${entry.getDescription()}</p>
                 </div>
-            </div>
-            <div class="card">
-                <img class="card-img-top" src="resources/Images/emotki.jpg" alt="Emotki" />
-                <div class="card-body">
-                    <h4 class="card-title">Emotki.Film</h4>
-                    <p class="card-text">Miasto Tekstopolis zamieszkują  emotki, gdzie każda z nich wyraża jedną konkretną emocję. Z wyjątkiem Minka, co może doprowadzić do katastrofy. </p>
-                </div>
-            </div>
-            <div class="card">
-                <img class="card-img-top" src="resources/Images/zlemamuski.jpg" alt="Zle mamuski 2" />
-                <div class="card-body">
-                    <h4 class="card-title">Złe mamuśki 2</h4>
-                    <p class="card-text">Losy czterech kobiet pracujących w służbie medycznej splatają się w szpitalu, gdzie dochodzi do wielu nielegalnych przedsięwzięć.</p>
-                </div>
-            </div>
-
-        </div>
+            </div>   
+		</c:forEach>
     </div>
 </div>
 
