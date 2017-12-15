@@ -31,6 +31,7 @@ import com.ssi.cinema.backend.service.RepertoireService;
 import com.ssi.cinema.backend.service.ReservationService;
 import com.ssi.cinema.backend.service.RoomService;
 import com.ssi.cinema.backend.service.RoomStatusService;
+import com.ssi.cinema.model.ReservationData;
 import com.ssi.cinema.model.Seat;
 
 @Controller
@@ -72,6 +73,29 @@ public class ReservationController {
 	
 	@RequestMapping(value = "/reservationSelectCinema", method = RequestMethod.GET)
 	public ModelAndView showReservationSelectCinema(HttpServletRequest request) {
+		request.setAttribute("content", "reservationSelectCinema");
+		ModelAndView model = new ModelAndView();
+		model.setViewName("index");
+		return model;
+	}
+	
+	@RequestMapping(value = "/showFinalizeReservation", method = RequestMethod.GET)
+	public ModelAndView showFinalizeReservation(HttpServletRequest request) {
+		
+		request.setAttribute("content", "reservationFulfillData");
+		
+		ModelAndView model = new ModelAndView();
+		model.addObject("reservationData", new ReservationData());
+		model.setViewName("index");
+		return model;
+	}
+	
+	@RequestMapping(value = "/finalizeReservationProcess", method = RequestMethod.POST)
+	public ModelAndView finalizeReservation(HttpServletRequest request, @ModelAttribute("reservationData") ReservationData reservationData) {
+		Reservation reservation = (Reservation) request.getSession().getAttribute("reservation");
+		reservation.setName(reservationData.getName());
+		reservation.setEmail(reservationData.getEmail());
+		reservationService.save(reservation);
 		request.setAttribute("content", "reservationSelectCinema");
 		ModelAndView model = new ModelAndView();
 		model.setViewName("index");
