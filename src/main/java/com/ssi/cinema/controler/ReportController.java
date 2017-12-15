@@ -41,20 +41,16 @@ public class ReportController {
             model.addObject("message", "Problems with generating report!");
         }
 
-        request.setAttribute("content", "manageMovies");
-        model.setViewName("index");
+        model.setViewName("report");
         return model;
     }
 
     boolean addToReport (Reservation reservation, Report report){
-        if ((!report.getCinema().isEmpty() && (!reservation.getCinema().getName().equals(report.getCinema())))
-            || (!report.getMovie().isEmpty() && (!reservation.getMovie().getName().equals(report.getMovie())))
-            || (!(reservation.getDate().getYear() == Integer.parseInt(report.getYear())))
-            || (!(reservation.getDate().getMonth() == Integer.parseInt(report.getMonth())))
-            || (!report.getDay().isEmpty() && (!(reservation.getDate().getDate() == Integer.parseInt(report.getDay()))))){
-                return false;
-        }
-        return true;
+        return (report.getCinema().isEmpty() || (reservation.getCinema().getName().equals(report.getCinema())))
+                && (report.getMovie().isEmpty() || (reservation.getMovie().getName().equals(report.getMovie())))
+                && (reservation.getDate().getYear() + 100 == Integer.parseInt(report.getYear()))
+                && (reservation.getDate().getMonth() == Integer.parseInt(report.getMonth()))
+                && (report.getDay().isEmpty() || (reservation.getDate().getDate() == Integer.parseInt(report.getDay())));
     }
 
     ReportObject buildReportObject(Reservation reservation){

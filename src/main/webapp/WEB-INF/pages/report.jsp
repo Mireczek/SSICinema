@@ -70,7 +70,7 @@
                 </tr>
             </table>
         </form:form>
-        <c:if test="${not empty selectedCinema}" >
+        <c:if test="${not empty reservations}" >
             <table>
                 <tr>
                     <td>Cinema</td><td>Movie</td><td>Date</td><td>Reservations</td>
