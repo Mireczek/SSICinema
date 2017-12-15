@@ -23,12 +23,15 @@ import com.ssi.cinema.backend.data.entity.Cinema;
 import com.ssi.cinema.backend.data.entity.Movie;
 import com.ssi.cinema.backend.data.entity.Repertoire;
 import com.ssi.cinema.backend.data.entity.Reservation;
+import com.ssi.cinema.backend.data.entity.Room;
+import com.ssi.cinema.backend.data.entity.RoomStatus;
 import com.ssi.cinema.backend.service.CinemaService;
 import com.ssi.cinema.backend.service.MovieService;
 import com.ssi.cinema.backend.service.RepertoireService;
 import com.ssi.cinema.backend.service.ReservationService;
 import com.ssi.cinema.backend.service.RoomService;
 import com.ssi.cinema.backend.service.RoomStatusService;
+import com.ssi.cinema.model.Seat;
 
 @Controller
 public class ReservationController {
@@ -79,17 +82,18 @@ public class ReservationController {
 	public ModelAndView showReservationSelectMovie(HttpServletRequest request, ModelMap map) {
 		String selectedCinemaString = request.getParameter("selectedCinema");
 		String selectedDayString = request.getParameter("selectedDay");
-		String selectedMovieHourString = request.getParameter("selectedHour");
+		String selectedMovieHourRoomString = request.getParameter("selectedHourRoom");
 		String selectedMovieIdString = request.getParameter("selectedMovie");
-		
+		System.out.println(selectedCinemaString + "-" + selectedDayString + "-" + selectedMovieHourRoomString + "-" + selectedMovieIdString);
 		Reservation reservation = (Reservation) request.getSession().getAttribute("reservation");
+		System.out.println(reservation);
 		if (reservation == null) {
 			reservation = new Reservation();
-			request.getSession().setAttribute("reservation", reservation);
 		}
 		if (!StringUtils.isEmpty(selectedCinemaString)) {
 			if (reservation.getCinema() == null || (reservation.getCinema() != null && !String.valueOf(reservation.getCinema().getId()).equals(selectedCinemaString))) {
 				Cinema cinema = cinemaService.load(Long.valueOf(selectedCinemaString));
+				
 				reservation.setCinema(cinema);
 			}
 		}
@@ -99,12 +103,14 @@ public class ReservationController {
 			String day = selectedDayString.substring(selectedDayString.indexOf('.') + 1);
 			reservation.setDate(new DateTime(year, Integer.parseInt(month), Integer.parseInt(day), 0, 0).toDate());
 		}
-		if (!StringUtils.isEmpty(selectedMovieHourString)) {
+		if (!StringUtils.isEmpty(selectedMovieHourRoomString)) {
 			if (reservation.getDate() != null) {
 				DateTime datetime = new DateTime(reservation.getDate());
-				String hour = selectedDayString.substring(0, selectedDayString.indexOf(':'));
-				String minutes = selectedDayString.substring(selectedDayString.indexOf(':') + 1);
+				String hour = selectedMovieHourRoomString.substring(0, selectedMovieHourRoomString.indexOf(':'));
+				String minutes = selectedMovieHourRoomString.substring(selectedMovieHourRoomString.indexOf(':') + 1, selectedMovieHourRoomString.indexOf('r'));
+				String roomIdString = selectedMovieHourRoomString.substring(selectedMovieHourRoomString.indexOf('r') + 1);
 				reservation.setDate(datetime.withHourOfDay(Integer.parseInt(hour)).withMinuteOfHour(Integer.parseInt(minutes)).toDate());
+				reservation.setRoom(roomService.load(Long.parseLong(roomIdString)));
 			}
 			
 		}
@@ -114,16 +120,93 @@ public class ReservationController {
 				reservation.setMovie(movie);
 			}
 		}
+		System.out.println(reservation.getCinema().getName());
+		System.out.println(reservation.getDate());
 		
+		request.getSession().setAttribute("reservation", reservation);
 		ModelAndView model = new ModelAndView();
-		if (reservation.getCinema() == null && reservation.getDate() == null) {
+		if (reservation.getCinema() != null && reservation.getDate() != null) {
 			model.addObject("repertoire", getRepertoire(reservation.getCinema(), reservation.getDate()));
+			model.addObject("repertoireMovies", getMoviesMap());
+			
 		}
 		
 		request.setAttribute("content", "reservationSelectCinema");
 		model.addObject("chooseSeats", isReadyToSelectSeats(reservation));
 		model.setViewName("index");
 		return model;
+	}
+	
+	@RequestMapping(value = "/reservationCreatorSeatsSelection", method = RequestMethod.GET)
+	public ModelAndView showReservationSelectSeat(HttpServletRequest request) {
+		String selectedSeat = request.getParameter("selectedSeat");
+		
+		Reservation reservation = (Reservation) request.getSession().getAttribute("reservation");
+		ModelAndView model = new ModelAndView();
+		if (reservation == null) {
+			request.setAttribute("content", "reservationSelectCinema");
+		}
+		else {
+			request.setAttribute("content", "reservationSelectSeats");
+			List<List<Seat>> seats = prepareSeatsMap(reservation);
+			if (reservation.getSeats() != null && selectedSeat != null) {
+				if (reservation.getSeats().contains(selectedSeat)) {
+					reservation.setSeats(reservation.getSeats().replaceAll(selectedSeat + ";", ""));
+				}
+				else {
+					reservation.setSeats(reservation.getSeats() + selectedSeat + ";");
+				}
+			}
+			else {
+				if (reservation.getSeats() == null) {
+					reservation.setSeats("");
+				}
+				if (selectedSeat != null) {
+					reservation.setSeats(reservation.getSeats() + selectedSeat + ";");
+				}
+			}
+			model.addObject("selectedSeats", reservation.getSeats());
+			model.addObject("seatsDefinition", seats);
+		}
+		
+		model.setViewName("index");
+		return model;
+	}
+	
+	private List<List<Seat>> prepareSeatsMap(Reservation reservation) {
+		Room room = reservation.getRoom();
+		String seatsDefinition = room.getSeatsDefinition();
+		int rows = Integer.parseInt(seatsDefinition.substring(0, seatsDefinition.indexOf("x")));
+		int columns = Integer.parseInt(seatsDefinition.substring(seatsDefinition.indexOf("x") + 1));
+		List<List<Seat>> seats = new ArrayList<>(columns);
+		RoomStatus roomStatus = roomStatusService.findByRoomAndDate(room, reservation.getDate());
+		List<Seat> lockedSeats = getLockedSeats(roomStatus);
+		for (int i = 0; i < columns; i++) {
+			List<Seat> seatsRow = new ArrayList<>(rows);
+			for (int j = 0; j < rows; j++) {
+				seatsRow.add(new Seat(j, i));
+				
+			}
+			seats.add(seatsRow);
+		}
+		return seats;
+	}
+	
+	private List<Seat> getLockedSeats(RoomStatus roomStatus) {
+		if (roomStatus == null) {
+			return new ArrayList<>();
+		}
+		String lockedSeats = roomStatus.getLockedSeats();
+		if (lockedSeats.isEmpty()) {
+			return new ArrayList<>();
+		}
+		List<Seat> seats = new ArrayList<>();
+		String seatsSplitted[] = lockedSeats.split(",");
+		for (String seat : seatsSplitted) {
+			String seatPosition[] = seat.split(":");
+			seats.add(new Seat(Integer.parseInt(seatPosition[0]), Integer.parseInt(seatPosition[1])));
+		}
+		return seats;
 	}
 	
 	private boolean isReadyToSelectSeats(Reservation reservation) {
@@ -139,28 +222,42 @@ public class ReservationController {
 		return true;
 	}
 	
-	private Map<Movie, List<String>> getRepertoire(Cinema cinema, Date date) {
-		// find by cinema and date
+	private Map<Long, Movie> getMoviesMap() {
+		Iterable<Movie> allMovies = movieService.findAll();
+		Map<Long, Movie> data = new TreeMap<>();
+		for (Movie movie : allMovies) {
+			data.put(movie.getId(), movie);
+		}
+		return data;
+	}
+	
+	private Map<Long, Map<String, Room>> getRepertoire(Cinema cinema, Date date) {
 		Iterable<Repertoire> allRepertoires = repertoireService.findAll();
-		Map<Movie, List<String>> data = new TreeMap<>();
+		Map<Long, Map<String, Room>> data = new TreeMap<>();
 		Date dateFrom = new DateTime(date).withTimeAtStartOfDay().toDate();
-		Date dateTo = new DateTime(date).withTime(32, 59, 59, 0).toDate();
+		Date dateTo = new DateTime(date).withTime(23, 59, 59, 0).toDate();
+		System.out.println(dateFrom);
+		System.out.println(dateTo);
 		for (Repertoire repertoire : allRepertoires) {
-			if (cinema.getId() == repertoire.getRoom().getCinema().getId() &&
+			System.out.println(repertoire.getRoom().getCinema().getId());
+			System.out.println(repertoire.getDate());
+			if (cinema.getId().equals(repertoire.getRoom().getCinema().getId()) &&
 					dateFrom.before(repertoire.getDate()) && dateTo.after(repertoire.getDate())) {
 				DateTime datetime = new DateTime(repertoire.getDate());
 				
-				if (data.containsKey(repertoire.getMovie())) {
+				if (data.containsKey(repertoire.getMovie().getId())) {
 					String hour = "" + datetime.getHourOfDay() + ":" + datetime.getMinuteOfHour();
-					data.get(repertoire.getMovie()).add(hour);
+					data.get(repertoire.getMovie().getId()).put(hour, repertoire.getRoom());
 				}
 				else {
-					List<String> hours = new ArrayList<>();
-					hours.add("" + datetime.getHourOfDay() + ":" + datetime.getMinuteOfHour());
-					data.put(repertoire.getMovie(), hours);
+					Map<String, Room> hoursRoomMap = new TreeMap<>();
+					String hour = "" + datetime.getHourOfDay() + ":" + datetime.getMinuteOfHour();
+					hoursRoomMap.put(hour, repertoire.getRoom());
+					data.put(repertoire.getMovie().getId(), hoursRoomMap);
 				}
 			}
 		}
+		System.out.println(data.entrySet().toString());
 		return data;
 	}
 	
