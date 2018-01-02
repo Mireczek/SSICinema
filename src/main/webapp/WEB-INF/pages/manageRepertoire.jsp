@@ -36,7 +36,7 @@
 			                        <form:label path="date">date:</form:label>
 			                    </td>
 			                    <td>
-									<form:input type="text" path="date" id="datepicker"/>
+									<form:input type="text" path="date"/>
 			                    </td>
 			                </tr>
 			                <tr>

@@ -44,6 +44,7 @@ public class LoginController {
 		if (null != user && login.getPassword().equals(user.getPassword())) {
 			Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+			request.getSession().setAttribute("user", user);
 			mav = new ModelAndView("index");
 		}
 		else {

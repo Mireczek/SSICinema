@@ -74,7 +74,7 @@ public class RepertoireManagementController {
 	private Date getRepertoireDate(String strDate, String strTime) throws ParseException {
 		System.out.println(strDate + " " + strTime);
 		String target = strDate + " " + strTime;
-		DateFormat df = new SimpleDateFormat("dd/MM/YYYY HH:mm");
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		Date result = df.parse(target);
 		
 		return result;

@@ -2,8 +2,10 @@ package com.ssi.cinema.controler;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,7 @@ import com.ssi.cinema.backend.service.RepertoireService;
 import com.ssi.cinema.backend.service.ReservationService;
 import com.ssi.cinema.backend.service.RoomService;
 import com.ssi.cinema.backend.service.RoomStatusService;
+import com.ssi.cinema.model.ReservationData;
 import com.ssi.cinema.model.Seat;
 
 @Controller
@@ -76,6 +79,46 @@ public class ReservationController {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("index");
 		return model;
+	}
+	
+	@RequestMapping(value = "/showFinalizeReservation", method = RequestMethod.GET)
+	public ModelAndView showFinalizeReservation(HttpServletRequest request) {
+		
+		request.setAttribute("content", "reservationFulfillData");
+		
+		ModelAndView model = new ModelAndView();
+		model.addObject("reservationData", new ReservationData());
+		model.setViewName("index");
+		return model;
+	}
+	
+	@RequestMapping(value = "/finalizeReservationProcess", method = RequestMethod.POST)
+	public ModelAndView finalizeReservation(HttpServletRequest request, @ModelAttribute("reservationData") ReservationData reservationData) {
+		Reservation reservation = (Reservation) request.getSession().getAttribute("reservation");
+		reservation.setName(reservationData.getName());
+		reservation.setEmail(reservationData.getEmail());
+		reservationService.save(reservation);
+		saveRoomStatusForReservation(reservation);
+		request.setAttribute("content", "reservationSelectCinema");
+		request.getSession().removeAttribute("reservation");
+		ModelAndView model = new ModelAndView();
+		model.setViewName("index");
+		return model;
+	}
+	
+	private void saveRoomStatusForReservation(Reservation reservation) {
+		RoomStatus roomStatus = roomStatusService.findByRoomAndDate(reservation.getRoom(), reservation.getDate());
+		if (roomStatus == null) {
+			roomStatus = new RoomStatus();
+			roomStatus.setDate(reservation.getDate());
+			roomStatus.setRoom(reservation.getRoom());
+			roomStatus.setLockedSeats(reservation.getSeats());
+		}
+		else {
+			roomStatus.setLockedSeats(roomStatus.getLockedSeats().concat(";").concat(reservation.getSeats()));
+		}
+		
+		roomStatusService.save(roomStatus);
 	}
 	
 	@RequestMapping(value = "/reservationCreator", method = RequestMethod.GET)
@@ -180,11 +223,15 @@ public class ReservationController {
 		int columns = Integer.parseInt(seatsDefinition.substring(seatsDefinition.indexOf("x") + 1));
 		List<List<Seat>> seats = new ArrayList<>(columns);
 		RoomStatus roomStatus = roomStatusService.findByRoomAndDate(room, reservation.getDate());
-		List<Seat> lockedSeats = getLockedSeats(roomStatus);
+		Set<String> lockedSeats = getLockedSeats(roomStatus);
 		for (int i = 0; i < columns; i++) {
 			List<Seat> seatsRow = new ArrayList<>(rows);
 			for (int j = 0; j < rows; j++) {
-				seatsRow.add(new Seat(j, i));
+				Seat seat = new Seat(j, i);
+				if (lockedSeats.contains("" + j + ":" + i)) {
+					seat.setLocked(true);
+				}
+				seatsRow.add(seat);
 				
 			}
 			seats.add(seatsRow);
@@ -192,19 +239,18 @@ public class ReservationController {
 		return seats;
 	}
 	
-	private List<Seat> getLockedSeats(RoomStatus roomStatus) {
+	private Set<String> getLockedSeats(RoomStatus roomStatus) {
 		if (roomStatus == null) {
-			return new ArrayList<>();
+			return new HashSet<>();
 		}
 		String lockedSeats = roomStatus.getLockedSeats();
 		if (lockedSeats.isEmpty()) {
-			return new ArrayList<>();
+			return new HashSet<>();
 		}
-		List<Seat> seats = new ArrayList<>();
-		String seatsSplitted[] = lockedSeats.split(",");
+		Set<String> seats = new HashSet<>();
+		String seatsSplitted[] = lockedSeats.split(";");
 		for (String seat : seatsSplitted) {
-			String seatPosition[] = seat.split(":");
-			seats.add(new Seat(Integer.parseInt(seatPosition[0]), Integer.parseInt(seatPosition[1])));
+			seats.add(seat);
 		}
 		return seats;
 	}
