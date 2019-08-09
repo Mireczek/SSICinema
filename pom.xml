@@ -76,6 +76,11 @@
         <artifactId>htmlunit-driver</artifactId>
         <version>2.26</version>
       </dependency>
+      <dependency>
+   	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-entitymanager</artifactId>
+	<version>4.3.8.Final</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
